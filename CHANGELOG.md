@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.0.6] - 2026-05-16
+
+### Changed
+
+- Restored resolver analyzer and response model compatibility while keeping the full resolver test suite at 100% coverage.
+- Updated resolver helper and store surfaces to preserve strict typing and linting without regressions.
+
 ## [v0.0.5] - 2026-04-21
 
 ### Changed
