@@ -145,7 +145,7 @@ class DependencyGraph:
                 continue
             seen.add(node)
             for neighbor in self._forward.get(node, set()):
-                queue.append(path + [neighbor])
+                queue.append([*path, neighbor])
 
         return []
 

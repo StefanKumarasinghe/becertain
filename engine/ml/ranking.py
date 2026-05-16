@@ -73,13 +73,13 @@ def _ranking_pseudo_labels(causes: list[RootCause]) -> list[int]:
 def _per_row_importance_share(row: np.ndarray, global_imp: np.ndarray) -> dict[str, float]:
     w = np.abs(row * global_imp)
     s = float(np.sum(w)) + 1e-12
-    return dict(zip(_FEATURE_NAMES, (w / s).tolist()))
+    return dict(zip(_FEATURE_NAMES, (w / s).tolist(), strict=False))
 
 
 def _per_row_feature_shares(row: np.ndarray) -> dict[str, float]:
     w = np.abs(row)
     s = float(np.sum(w)) + 1e-12
-    return dict(zip(_FEATURE_NAMES, (w / s).tolist()))
+    return dict(zip(_FEATURE_NAMES, (w / s).tolist(), strict=False))
 
 
 class RandomForestClassifierModel(Protocol):

@@ -33,7 +33,7 @@ def _metric_result(name: str, values: list[float], service: str = "payment-servi
                         "service": service,
                         "service_name": service,
                     },
-                    "values": [[t, str(v)] for t, v in zip(ts, values)],
+                    "values": [[t, str(v)] for t, v in zip(ts, values, strict=False)],
                 }
             ]
         },

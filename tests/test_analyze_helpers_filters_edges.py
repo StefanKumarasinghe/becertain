@@ -404,7 +404,7 @@ def test_slo_pairs_and_granger_selection_edges(monkeypatch):
 
 def test_remaining_small_helper_branches():
     # _to_root_cause_model: non-list signals branch, confidence fallback branch, direct model_validate branch.
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match=r".*"):
         helpers._to_root_cause_model(
             {
                 "hypothesis": "h",

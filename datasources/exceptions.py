@@ -12,17 +12,17 @@ class DataSourceError(Exception):
     pass
 
 
-class DataSourceUnavailable(DataSourceError):
+class DataSourceUnavailableError(DataSourceError):
     pass
 
 
-class QueryTimeout(DataSourceError):
+class QueryTimeoutError(DataSourceError):
     pass
 
 
-class InvalidQuery(DataSourceError):
+class InvalidQueryError(DataSourceError):
     pass
 
 
-class BackendStartupTimeout(DataSourceError):
+class BackendStartupTimeoutError(DataSourceError):
     pass

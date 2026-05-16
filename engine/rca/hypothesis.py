@@ -297,9 +297,11 @@ def _nearest_deployment(
         if candidates:
             return min(candidates, key=_deployment_distance)
 
-    nearby_deploys = event_registry.in_window(window_start, window_end) if event_registry else [
-        d for d in deployments if window_start <= d.timestamp <= window_end
-    ]
+    nearby_deploys = (
+        event_registry.in_window(window_start, window_end)
+        if event_registry
+        else [d for d in deployments if window_start <= d.timestamp <= window_end]
+    )
     return min(nearby_deploys, key=_deployment_distance) if nearby_deploys else None
 
 

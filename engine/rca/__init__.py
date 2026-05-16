@@ -9,4 +9,4 @@ License. See http://www.apache.org/licenses/LICENSE-2.0 for details.
 
 from engine.rca.hypothesis import RcaSignalInputs, RootCause, generate
 
-__all__ = ["RootCause", "RcaSignalInputs", "generate"]
+__all__ = ["RcaSignalInputs", "RootCause", "generate"]

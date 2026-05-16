@@ -31,6 +31,7 @@ _context_var: ContextVar[InternalContext | None] = ContextVar("resolver_internal
 log = logging.getLogger(__name__)
 _jti_seen_lock = threading.Lock()
 _jti_seen_cache: dict[str, float] = {}
+_JTI_CACHE_MAX_SIZE = 10000
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
 
@@ -66,6 +67,8 @@ def _assert_jti_not_replayed(jti: str) -> None:
         stale = [token_id for token_id, ts in _jti_seen_cache.items() if now - ts > ttl]
         for token_id in stale:
             _jti_seen_cache.pop(token_id, None)
+        if len(_jti_seen_cache) >= _JTI_CACHE_MAX_SIZE:
+            _jti_seen_cache.clear()
         if jti in _jti_seen_cache:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Replayed context token")
         _jti_seen_cache[jti] = now

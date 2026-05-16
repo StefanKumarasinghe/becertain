@@ -11,7 +11,7 @@ License. See http://www.apache.org/licenses/LICENSE-2.0 for details.
 import httpx
 import pytest
 
-from datasources.exceptions import InvalidQuery, QueryTimeout
+from datasources.exceptions import InvalidQueryError, QueryTimeoutError
 from datasources.helpers import FetchRequestOptions, fetch_json, fetch_text
 
 
@@ -55,7 +55,7 @@ async def test_fetch_json_success(monkeypatch):
 async def test_fetch_json_http_error(monkeypatch):
     resp = DummyResponse(status_code=404, text="not found")
     monkeypatch.setattr(httpx, "AsyncClient", lambda timeout: DummyClient(resp))
-    with pytest.raises(InvalidQuery):
+    with pytest.raises(InvalidQueryError):
         await fetch_json("url")
 
 
@@ -67,7 +67,7 @@ async def test_fetch_json_timeout(monkeypatch):
     client = DummyClient(DummyResponse())
     client.get = get
     monkeypatch.setattr(httpx, "AsyncClient", lambda timeout: client)
-    with pytest.raises(QueryTimeout):
+    with pytest.raises(QueryTimeoutError):
         await fetch_json("url")
 
 

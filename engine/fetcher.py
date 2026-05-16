@@ -113,7 +113,7 @@ async def fetch_metrics(
     pairs: list[tuple[str, JSONDict]] = []
     any_results = False
 
-    for q, r in zip(queries, raw):
+    for q, r in zip(queries, raw, strict=False):
         if isinstance(r, Exception):
             log.warning("fetch_metrics query=%s failed: %s", q, r)
             continue

@@ -14,7 +14,7 @@ import httpx
 from datasources.types import JSONDict, TraceFilters
 
 
-class BaseConnector(ABC):
+class BaseConnector:
     health_path: str = ""
 
     def __init__(
@@ -47,7 +47,7 @@ class BaseConnector(ABC):
         await self.client.aclose()
 
 
-class LogsConnector(BaseConnector):
+class LogsConnector(BaseConnector, ABC):
     @abstractmethod
     async def query_range(
         self,
@@ -59,7 +59,7 @@ class LogsConnector(BaseConnector):
     ) -> JSONDict: ...
 
 
-class MetricsConnector(BaseConnector):
+class MetricsConnector(BaseConnector, ABC):
     @abstractmethod
     async def query_range(
         self,
@@ -71,7 +71,7 @@ class MetricsConnector(BaseConnector):
     ) -> JSONDict: ...
 
 
-class TracesConnector(BaseConnector):
+class TracesConnector(BaseConnector, ABC):
     @abstractmethod
     async def query_range(
         self,

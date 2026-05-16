@@ -149,7 +149,6 @@ def _summary(report: AnalysisReport) -> str:
     top = f" Top: {report.root_causes[0].hypothesis[:120]}..." if report.root_causes else ""
     return f"[{report.overall_severity.value.upper()}] {' | '.join(parts)}.{top}"
 
-
 def _build_log_query(services: list[str] | None, requested_log_query: str | None) -> str:
     return build_log_query(services, requested_log_query)
 
@@ -633,7 +632,7 @@ async def run(provider: DataSourceProvider, req: AnalyzeRequest) -> AnalysisRepo
     state = AnalyzerRuntimeState(warnings=warnings, suppression_counts=suppression_counts)
     analysis_window_seconds = float(max(0, req.end - req.start))
 
-    log_query = _build_log_query(req.services, req.log_query)
+    log_query = build_log_query(req.services, req.log_query)
     trace_filters: dict[str, str | int | float | bool] = {"service.name": primary_service} if primary_service else {}
     all_metric_queries = list(dict.fromkeys((req.metric_queries or []) + DEFAULT_METRIC_QUERIES))
 
@@ -750,13 +749,16 @@ async def run(provider: DataSourceProvider, req: AnalyzeRequest) -> AnalysisRepo
     has_actionable_now = bool(
         metric_anomalies or log_bursts or log_patterns or service_latency or error_propagation or slo_alerts
     )
-    if not has_actionable_now and (forecasts or degradation_signals or change_points):
-        if severity.weight() > Severity.MEDIUM.weight():
-            warnings.append(
-                "Overall severity was capped at MEDIUM because only predictive signals were present "
-                "without corroborating actionable anomalies."
-            )
-            severity = Severity.MEDIUM
+    if (
+        not has_actionable_now
+        and (forecasts or degradation_signals or change_points)
+        and severity.weight() > Severity.MEDIUM.weight()
+    ):
+        warnings.append(
+            "Overall severity was capped at MEDIUM because only predictive signals were present "
+            "without corroborating actionable anomalies."
+        )
+        severity = Severity.MEDIUM
 
     forecasts = [item for item in forecasts if isinstance(item, TrajectoryForecast)]
     degradation_signals = [item for item in degradation_signals if isinstance(item, DegradationSignal)]

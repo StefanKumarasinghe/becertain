@@ -68,13 +68,13 @@ def _coerce_event(value: object) -> StoredEvent | None:
                 coerced = cast(
                     StoredEvent,
                     {
-                    "service": service,
-                    "timestamp": timestamp,
-                    "version": version,
-                    "author": author,
-                    "environment": environment,
-                    "source": source,
-                    "metadata": metadata,
+                        "service": service,
+                        "timestamp": timestamp,
+                        "version": version,
+                        "author": author,
+                        "environment": environment,
+                        "source": source,
+                        "metadata": metadata,
                     },
                 )
     return coerced

@@ -64,17 +64,17 @@ class AnalysisReport(NpModel):
     log_patterns: list[LogPattern]
     service_latency: list[ServiceLatency]
     error_propagation: list[ErrorPropagation]
-    slo_alerts: list[SloBurnAlert] = []
+    slo_alerts: list[SloBurnAlert] = Field(default_factory=list)
     root_causes: list[RootCause]
-    ranked_causes: list[RankedCause] = []
-    change_points: list[ChangePoint] = []
-    log_metric_links: list[LogMetricLink] = []
-    forecasts: list[TrajectoryForecast] = []
-    degradation_signals: list[DegradationSignal] = []
-    anomaly_clusters: list[AnomalyCluster] = []
-    granger_results: list[GrangerResult] = []
-    bayesian_scores: list[BayesianScore] = []
-    analysis_warnings: list[str] = []
+    ranked_causes: list[RankedCause] = Field(default_factory=list)
+    change_points: list[ChangePoint] = Field(default_factory=list)
+    log_metric_links: list[LogMetricLink] = Field(default_factory=list)
+    forecasts: list[TrajectoryForecast] = Field(default_factory=list)
+    degradation_signals: list[DegradationSignal] = Field(default_factory=list)
+    anomaly_clusters: list[AnomalyCluster] = Field(default_factory=list)
+    granger_results: list[GrangerResult] = Field(default_factory=list)
+    bayesian_scores: list[BayesianScore] = Field(default_factory=list)
+    analysis_warnings: list[str] = Field(default_factory=list)
     overall_severity: Severity
     summary: str
     quality: AnalysisQuality | None = None

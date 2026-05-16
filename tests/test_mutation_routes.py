@@ -185,6 +185,7 @@ def test_jobs_required_context_raises_when_missing(monkeypatch: pytest.MonkeyPat
     assert exc.value.status_code == 401
     assert exc.value.detail == "Missing internal context"
 
+
 def test_jobs_require_permission_forwards_name(monkeypatch: pytest.MonkeyPatch) -> None:
     seen = {}
 
@@ -194,6 +195,7 @@ def test_jobs_require_permission_forwards_name(monkeypatch: pytest.MonkeyPatch) 
     monkeypatch.setattr(jobs_route, "ensure_permission", fake_ensure_permission)
     jobs_route._require_permission("read:rca")
     assert seen["name"] == "read:rca"
+
 
 @pytest.mark.asyncio
 async def test_topology_route(monkeypatch: pytest.MonkeyPatch) -> None:

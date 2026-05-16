@@ -8,6 +8,8 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 License. See http://www.apache.org/licenses/LICENSE-2.0 for details.
 """
 
+from typing import Any, ClassVar
+
 import pytest
 
 from api.requests import DeploymentEventRequest
@@ -54,7 +56,7 @@ async def test_register_deployment_missing_tenant(monkeypatch):
         author = ""
         environment = "production"
         source = "api"
-        metadata = {}
+        metadata: ClassVar[dict[str, Any]] = {}
 
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match=r".*"):
         await events_route.register_deployment(FakeReq())

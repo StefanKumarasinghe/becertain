@@ -11,8 +11,8 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
-import os
 import logging
+import os
 import sys
 import time
 from collections.abc import AsyncIterator
@@ -26,6 +26,7 @@ from pydantic import BaseModel, Field
 
 from api.routes.analyze import router as analyze_router
 from api.routes.causal import router as causal_router
+from api.routes.common import close_providers
 from api.routes.correlation import router as correlation_router
 from api.routes.events import router as events_router
 from api.routes.forecast import router as forecast_router
@@ -37,10 +38,9 @@ from api.routes.ml import router as ml_router
 from api.routes.slo import router as slo_router
 from api.routes.topology import router as topology_router
 from api.routes.traces import router as traces_router
-from api.routes.common import close_providers
 from config import LOGS_BACKEND_LOKI, METRICS_BACKEND_MIMIR, TRACES_BACKEND_TEMPO, Settings, settings
 from database import dispose_database, init_database, init_db
-from datasources.exceptions import BackendStartupTimeout
+from datasources.exceptions import BackendStartupTimeoutError
 from middleware.openapi import install_custom_openapi
 from middleware.runtime_ssl import RuntimeSSLOptions, run_uvicorn
 from services.rca_job_service import rca_job_service
@@ -141,7 +141,7 @@ async def wait_for(
             except (TimeoutError, httpx.RequestError) as exc:
                 log.debug("%s not reachable (attempt %d): %s", name, attempt, exc)
             await asyncio.sleep(2)
-    raise BackendStartupTimeout(f"{name} did not become ready within {timeout}s")
+    raise BackendStartupTimeoutError(f"{name} did not become ready within {timeout}s")
 
 
 async def _wait_for_all_bg(data_settings: Settings, tenant_id: str) -> None:
@@ -183,7 +183,7 @@ async def _wait_for_all_bg(data_settings: Settings, tenant_id: str) -> None:
 
     log.info("Backend readiness check starting (timeout=%ds) ...", data_settings.startup_timeout)
 
-    for name, url, hdrs, ok in checks:
+    for name, _url, _hdrs, _ok in checks:
         _BACKEND_STATUS[name] = "waiting"
 
     results = await asyncio.gather(
@@ -195,7 +195,7 @@ async def _wait_for_all_bg(data_settings: Settings, tenant_id: str) -> None:
     )
 
     all_ok = True
-    for (name, *_), result in zip(checks, results):
+    for (name, *_), result in zip(checks, results, strict=False):
         if isinstance(result, Exception):
             log.error("%s failed readiness: %s", name, result)
             _BACKEND_STATUS[name] = f"failed: {result}"

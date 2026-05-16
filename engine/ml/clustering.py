@@ -56,7 +56,7 @@ def _cluster_one_metric(
     labels = model.fit_predict(x)
 
     clusters: dict[int, list[MetricAnomaly]] = {}
-    for label, anomaly in zip(labels, anomalies):
+    for label, anomaly in zip(labels, anomalies, strict=False):
         clusters.setdefault(int(label), []).append(anomaly)
 
     result: list[AnomalyCluster] = []

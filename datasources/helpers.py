@@ -14,7 +14,7 @@ from typing import Any, cast
 
 import httpx
 
-from datasources.exceptions import DataSourceUnavailable, InvalidQuery, QueryTimeout
+from datasources.exceptions import DataSourceUnavailableError, InvalidQueryError, QueryTimeoutError
 from datasources.types import JSONDict, QueryParams
 
 
@@ -90,11 +90,11 @@ async def fetch_json(
         payload = resp.json()
         return payload if isinstance(payload, dict) else {}
     except httpx.HTTPStatusError as e:
-        raise InvalidQuery(f"{parsed_messages.invalid_msg} [{e.response.status_code}]: {e.response.text}") from e
+        raise InvalidQueryError(f"{parsed_messages.invalid_msg} [{e.response.status_code}]: {e.response.text}") from e
     except httpx.TimeoutException as e:
-        raise QueryTimeout(parsed_messages.timeout_msg) from e
+        raise QueryTimeoutError(parsed_messages.timeout_msg) from e
     except httpx.RequestError as e:
-        raise DataSourceUnavailable(f"{parsed_messages.unavailable_msg} {url}") from e
+        raise DataSourceUnavailableError(f"{parsed_messages.unavailable_msg} {url}") from e
 
 
 async def fetch_text(
@@ -114,8 +114,8 @@ async def fetch_text(
         resp.raise_for_status()
         return resp.text
     except httpx.HTTPStatusError as e:
-        raise InvalidQuery(f"{parsed_messages.invalid_msg} [{e.response.status_code}]: {e.response.text}") from e
+        raise InvalidQueryError(f"{parsed_messages.invalid_msg} [{e.response.status_code}]: {e.response.text}") from e
     except httpx.TimeoutException as e:
-        raise QueryTimeout(parsed_messages.timeout_msg) from e
+        raise QueryTimeoutError(parsed_messages.timeout_msg) from e
     except httpx.RequestError as e:
-        raise DataSourceUnavailable(f"{parsed_messages.unavailable_msg} {url}") from e
+        raise DataSourceUnavailableError(f"{parsed_messages.unavailable_msg} {url}") from e

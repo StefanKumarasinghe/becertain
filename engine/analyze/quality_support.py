@@ -15,7 +15,8 @@ from collections.abc import Sequence
 
 import numpy as np
 
-from api.responses import LogBurst, LogPattern, MetricAnomaly, RootCause as RootCauseModel
+from api.responses import LogBurst, LogPattern, MetricAnomaly
+from api.responses import RootCause as RootCauseModel
 from config import settings
 from engine.enums import Severity, Signal
 from engine.ml import RankedCause
@@ -48,11 +49,7 @@ def root_cause_signal_count(root_cause: RootCauseModel) -> int:
 def root_cause_corroboration_summary(root_cause: RootCauseModel) -> str:
     count = root_cause_signal_count(root_cause)
     signals = sorted(
-        {
-            signal_key(signal)
-            for signal in (getattr(root_cause, "contributing_signals", []) or [])
-            if signal_key(signal)
-        }
+        {signal_key(signal) for signal in (getattr(root_cause, "contributing_signals", []) or []) if signal_key(signal)}
     )
     if not signals:
         return "single-signal evidence"

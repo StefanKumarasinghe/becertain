@@ -20,7 +20,7 @@ from connectors.loki import LokiConnector
 from connectors.mimir import MimirConnector
 from connectors.tempo import TempoConnector
 from datasources.base import BaseConnector
-from datasources.exceptions import DataSourceUnavailable, InvalidQuery, QueryTimeout
+from datasources.exceptions import DataSourceUnavailableError, InvalidQueryError, QueryTimeoutError
 from datasources.helpers import FetchRequestOptions, fetch_json, fetch_text
 from datasources.provider import DataSourceProvider
 
@@ -81,11 +81,15 @@ async def test_datasource_helpers_and_provider(monkeypatch):
     )
     assert await fetch_json("https://api", options=FetchRequestOptions(client=_AsyncClient(_Response([1, 2, 3])))) == {}
 
-    with pytest.raises(InvalidQuery):
-        await fetch_json("https://api", options=FetchRequestOptions(client=_AsyncClient(_Response(status_code=400, text="bad"))))
-    with pytest.raises(QueryTimeout):
-        await fetch_json("https://api", options=FetchRequestOptions(client=_AsyncClient(error=httpx.TimeoutException("timeout"))))
-    with pytest.raises(DataSourceUnavailable):
+    with pytest.raises(InvalidQueryError):
+        await fetch_json(
+            "https://api", options=FetchRequestOptions(client=_AsyncClient(_Response(status_code=400, text="bad")))
+        )
+    with pytest.raises(QueryTimeoutError):
+        await fetch_json(
+            "https://api", options=FetchRequestOptions(client=_AsyncClient(error=httpx.TimeoutException("timeout")))
+        )
+    with pytest.raises(DataSourceUnavailableError):
         await fetch_json(
             "https://api",
             options=FetchRequestOptions(
@@ -93,11 +97,15 @@ async def test_datasource_helpers_and_provider(monkeypatch):
             ),
         )
 
-    with pytest.raises(InvalidQuery):
-        await fetch_text("https://api", options=FetchRequestOptions(client=_AsyncClient(_Response(status_code=500, text="bad"))))
-    with pytest.raises(QueryTimeout):
-        await fetch_text("https://api", options=FetchRequestOptions(client=_AsyncClient(error=httpx.TimeoutException("timeout"))))
-    with pytest.raises(DataSourceUnavailable):
+    with pytest.raises(InvalidQueryError):
+        await fetch_text(
+            "https://api", options=FetchRequestOptions(client=_AsyncClient(_Response(status_code=500, text="bad")))
+        )
+    with pytest.raises(QueryTimeoutError):
+        await fetch_text(
+            "https://api", options=FetchRequestOptions(client=_AsyncClient(error=httpx.TimeoutException("timeout")))
+        )
+    with pytest.raises(DataSourceUnavailableError):
         await fetch_text(
             "https://api",
             options=FetchRequestOptions(

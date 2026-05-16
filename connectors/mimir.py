@@ -1,7 +1,7 @@
 """
-Mimir connector for Metrics queries. This module defines a MimirConnector class that provides methods to scrape metrics 
-and query time series data from a Mimir instance. It uses httpx for making asynchronous HTTP requests to the Mimir API 
-and includes error handling for common issues such as invalid queries, timeouts, and service unavailability. 
+Mimir connector for Metrics queries. This module defines a MimirConnector class that provides methods to scrape metrics
+and query time series data from a Mimir instance. It uses httpx for making asynchronous HTTP requests to the Mimir API
+and includes error handling for common issues such as invalid queries, timeouts, and service unavailability.
 The connector is designed to be used within the resolver service to fetch metric data for analysis and correlation
 with other telemetry data.
 

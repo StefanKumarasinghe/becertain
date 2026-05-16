@@ -179,7 +179,7 @@ async def test_register_deployment_rejects_blank_tenant(monkeypatch):
         tenant_id="tenant-a", service="svc", timestamp=12, version="v1"
     )
 
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match=r".*"):
         await events_route.register_deployment(request)
 
 

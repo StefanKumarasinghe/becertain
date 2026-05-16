@@ -9,12 +9,12 @@ License. See http://www.apache.org/licenses/LICENSE-2.0 for details.
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 from config import SEVERITY_WEIGHTS, settings
 
 
-class Severity(str, Enum):
+class Severity(StrEnum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -34,14 +34,14 @@ class Severity(str, Enum):
         return SEVERITY_WEIGHTS[self.value]
 
 
-class Signal(str, Enum):
+class Signal(StrEnum):
     METRICS = "metrics"
     LOGS = "logs"
     TRACES = "traces"
     EVENTS = "events"
 
 
-class ChangeType(str, Enum):
+class ChangeType(StrEnum):
     SPIKE = "spike"
     DROP = "drop"
     DRIFT = "drift"
@@ -49,7 +49,7 @@ class ChangeType(str, Enum):
     OSCILLATION = "oscillation"
 
 
-class RcaCategory(str, Enum):
+class RcaCategory(StrEnum):
     DEPLOYMENT = "deployment"
     RESOURCE_EXHAUSTION = "resource_exhaustion"
     DEPENDENCY_FAILURE = "dependency_failure"

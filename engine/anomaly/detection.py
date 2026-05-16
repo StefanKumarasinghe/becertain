@@ -149,12 +149,9 @@ def _apply_density_cap(anomalies: list[MetricAnomaly], timestamps: np.ndarray) -
     if max_density <= 0:
         return anomalies
 
-    if timestamps.size >= 2:
-        window_seconds = max(1.0, float(timestamps.max() - timestamps.min()))
-    else:
-        window_seconds = 3600.0
+    window_seconds = max(1.0, float(timestamps.max() - timestamps.min())) if timestamps.size >= 2 else 3600.0
     window_hours = max(window_seconds / 3600.0, 1.0 / 60.0)
-    keep_limit = max(1, int(math.ceil(max_density * window_hours)))
+    keep_limit = max(1, math.ceil(max_density * window_hours))
     if len(anomalies) <= keep_limit:
         return anomalies
 
@@ -279,7 +276,9 @@ def detect(
     slope, *_ = linregress(np.arange(len(clean)), clean)
 
     anomalies: list[MetricAnomaly] = []
-    for t, v, z, m, c, iso_l, iso_s in zip(ts, arr, z_scores, mad_scores, cusum_flags, iso_labels, iso_scores):
+    for t, v, z, m, c, iso_l, iso_s in zip(
+        ts, arr, z_scores, mad_scores, cusum_flags, iso_labels, iso_scores, strict=False
+    ):
         iq = _iqr_score_value(float(v), med, iqr)
         tukey = _tukey_outlier_class(float(v), q1, q3, iqr)
         iqr_signal = tukey != "none"

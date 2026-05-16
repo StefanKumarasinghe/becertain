@@ -148,7 +148,7 @@ def test_change_type_shift_when_z_zero():
 
 def test_tukey_mild_low():
     arr = np.array([10.0, 11.0, 12.0, 13.0, 0.5], dtype=float)
-    med, q1, q3, iqr = _series_median_iqr(arr)
+    _med, q1, q3, iqr = _series_median_iqr(arr)
     cls = _tukey_outlier_class(0.5, q1, q3, iqr)
     assert cls in ("mild_low", "extreme_low")
 

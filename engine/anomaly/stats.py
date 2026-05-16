@@ -81,10 +81,7 @@ def compute_series_distribution_stats(
     skewness = skew_raw if math.isfinite(skew_raw) else 0.0
     kurtosis = kurt_raw if math.isfinite(kurt_raw) else 0.0
 
-    if abs(mean) > 1e-12:
-        cv = float(std / mean)
-    else:
-        cv = 0.0
+    cv = float(std / mean) if abs(mean) > 1e-12 else 0.0
     if not math.isfinite(cv):
         cv = 0.0
 

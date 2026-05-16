@@ -14,6 +14,7 @@ from types import SimpleNamespace
 
 from api.responses import LogBurst, LogPattern, MetricAnomaly
 from api.responses import RootCause as RootCauseModel
+from engine.analyze.helpers import AnalyzerOutputInputs, PrecisionQualityGateInputs
 from engine.analyzer import (
     _apply_precision_quality_gates,
     _build_log_query,
@@ -22,7 +23,6 @@ from engine.analyzer import (
     _select_granger_series,
     _to_root_cause_model,
 )
-from engine.analyze.helpers import AnalyzerOutputInputs, PrecisionQualityGateInputs
 from engine.causal.granger import GrangerResult
 from engine.changepoint import ChangePoint
 from engine.enums import ChangeType, RcaCategory, Severity, Signal

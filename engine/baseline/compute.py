@@ -48,10 +48,10 @@ def compute(ts: list[float], vals: list[float], z_threshold: float | None = None
     if n >= settings.baseline_seasonal_min_samples:
         buckets = _hour_buckets(ts)
         bucket_map: dict[int, list[float]] = {}
-        for b, v in zip(buckets, vals):
+        for b, v in zip(buckets, vals, strict=False):
             bucket_map.setdefault(b, []).append(v)
         hour_avgs = {h: float(np.mean(v)) for h, v in bucket_map.items()}
-        detrended = np.array([v - hour_avgs.get(b, 0.0) for b, v in zip(buckets, vals)])
+        detrended = np.array([v - hour_avgs.get(b, 0.0) for b, v in zip(buckets, vals, strict=False)])
         m = float(np.mean(arr))
         s = float(np.std(detrended)) or 1.0
         seasonal_mean = float(np.mean(list(hour_avgs.values())))

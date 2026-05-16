@@ -75,7 +75,7 @@ def test_response_exports_dynamic_lookup_and_missing_attr():
     assert response_exports.JobStatus is JobStatus
     assert response_exports.AnalyzeJobSummary.__name__ == "AnalyzeJobSummary"
     with pytest.raises(AttributeError):
-        response_exports.DoesNotExist
+        del response_exports.DoesNotExist
 
 
 @pytest.mark.asyncio
@@ -122,7 +122,7 @@ async def test_wait_for_success_and_timeout(monkeypatch):
             raise httpx.RequestError("down")
 
     monkeypatch.setattr(app_main.httpx, "AsyncClient", _TimeoutClient)
-    with pytest.raises(app_main.BackendStartupTimeout):
+    with pytest.raises(app_main.BackendStartupTimeoutError):
         await app_main.wait_for("tempo", "http://tempo", 0)
 
 

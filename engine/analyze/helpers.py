@@ -18,6 +18,7 @@ from collections.abc import Callable
 from typing import TypeAlias, TypeVar
 
 import httpx
+
 from api.requests import AnalyzeRequest
 from api.responses import (
     AnalysisQuality,
@@ -39,20 +40,38 @@ from engine.analyze.filters import (
 from engine.analyze.filters import (
     normalize_services as _normalize_services,
 )
-from engine.analyze.series import select_granger_series as _select_granger_series_impl
-from engine.analyze.series import slo_series_pairs as _slo_series_pairs_impl
 from engine.analyze.quality_support import (
     apply_root_cause_quality_gates as _apply_root_cause_quality_gates,
+)
+from engine.analyze.quality_support import (
     build_selection_score_components as _build_selection_score_components_impl,
+)
+from engine.analyze.quality_support import (
     compute_anomaly_density as _compute_anomaly_density,
+)
+from engine.analyze.quality_support import (
     filter_log_bursts_for_precision_rca as _filter_log_bursts_for_precision_rca_impl,
+)
+from engine.analyze.quality_support import (
     is_precision_profile as _is_precision_profile_impl,
+)
+from engine.analyze.quality_support import (
     is_strongly_periodic_log_bursts as _is_strongly_periodic_log_bursts_impl,
+)
+from engine.analyze.quality_support import (
     root_cause_corroboration_summary as _root_cause_corroboration_summary_impl,
+)
+from engine.analyze.quality_support import (
     root_cause_signal_count as _root_cause_signal_count_impl,
+)
+from engine.analyze.quality_support import (
     safe_float as _safe_float_impl,
+)
+from engine.analyze.quality_support import (
     signal_key as _signal_key_impl,
 )
+from engine.analyze.series import select_granger_series as _select_granger_series_impl
+from engine.analyze.series import slo_series_pairs as _slo_series_pairs_impl
 from engine.anomaly.stats import compute_series_distribution_stats
 from engine.baseline import compute as baseline_compute
 from engine.causal.granger import GrangerResult
@@ -187,7 +206,7 @@ def _dedupe_metric_anomalies(items: list[MetricAnomaly]) -> list[MetricAnomaly]:
     for item in items:
         key = (
             str(getattr(item, "metric_name", "metric")),
-            int(round(float(getattr(item, "timestamp", 0.0)))),
+            round(float(getattr(item, "timestamp", 0.0))),
             str(getattr(getattr(item, "change_type", None), "value", getattr(item, "change_type", "unknown"))),
         )
         current = selected.get(key)
@@ -199,9 +218,10 @@ def _dedupe_metric_anomalies(items: list[MetricAnomaly]) -> list[MetricAnomaly]:
         if next_sev > curr_sev:
             selected[key] = item
             continue
-        if next_sev == curr_sev:  # pragma: no branch
-            if abs(float(getattr(item, "z_score", 0.0))) > abs(float(getattr(current, "z_score", 0.0))):
-                selected[key] = item
+        if next_sev == curr_sev and abs(float(getattr(item, "z_score", 0.0))) > abs(
+            float(getattr(current, "z_score", 0.0))
+        ):  # pragma: no branch
+            selected[key] = item
     return sorted(selected.values(), key=lambda a: (a.timestamp, a.metric_name))
 
 
@@ -216,7 +236,7 @@ def _dedupe_change_points(items: list[ChangePoint]) -> list[ChangePoint]:
     for item in items:
         key = (
             str(getattr(item, "metric_name", "metric")),
-            int(round(float(item.timestamp))),
+            round(float(item.timestamp)),
             str(getattr(item.change_type, "value", item.change_type)),
         )
         current = selected.get(key)
@@ -389,7 +409,7 @@ def _apply_metric_anomaly_density_gate(
     if max_density <= 0:
         return metric_anomalies
 
-    keep_per_metric = max(1, int(math.ceil(max_density * hours)))
+    keep_per_metric = max(1, math.ceil(max_density * hours))
     by_metric: dict[str, list[MetricAnomaly]] = defaultdict(list)
     for item in metric_anomalies:
         metric_name = str(getattr(item, "metric_name", "metric")).strip() or "metric"
@@ -437,7 +457,7 @@ def _apply_change_point_density_gate(
     if max_density_cp <= 0:
         return change_points
 
-    keep_per_metric_cp = max(1, int(math.ceil(max_density_cp * hours)))
+    keep_per_metric_cp = max(1, math.ceil(max_density_cp * hours))
     by_metric_cp: dict[str, list[ChangePoint]] = defaultdict(list)
     for change_point in change_points:
         metric_name = str(getattr(change_point, "metric_name", "metric")).strip() or "metric"
@@ -521,7 +541,7 @@ async def _process_one_metric_series(
         # result is persisted by store; value not used later
         _ = await baseline_store.compute_and_persist(req.tenant_id, metric_name, ts, vals, z_threshold=z_threshold)
     except _RECOVERABLE_ANALYSIS_ERRORS:
-        # fallback compute also only triggers side‑effects
+        # fallback compute also only triggers side-effects
         _ = baseline_compute(ts, vals, z_threshold=z_threshold)
 
     metric_anomalies = anomaly.detect(metric_name, ts, vals, req.sensitivity)
@@ -613,7 +633,7 @@ async def _process_metrics(
     degradation_signals: list[DegradationSignal] = []
     series_map: dict[str, list[float]] = {}
 
-    for (query_string, metric_name, _ts, vals), result in zip(series_list, processed):
+    for (query_string, metric_name, _ts, vals), result in zip(series_list, processed, strict=False):
         series_map[_series_key(query_string, metric_name)] = vals
         if isinstance(result, BaseException):
             log.warning("Metric stage failed for %s (%s): %s", metric_name, query_string, result)

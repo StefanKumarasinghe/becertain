@@ -29,7 +29,7 @@ def test_compute_series_distribution_stats_insufficient_samples():
 
 def test_compute_series_distribution_stats_filters_non_finite():
     base = [float(i) for i in range(settings.min_samples)]
-    vals = base[:-3] + [float("nan"), float("inf"), float("-inf")] + base[-3:]
+    vals = [*base[:-3], float("nan"), float("inf"), float("-inf"), *base[-3:]]
     out = compute_series_distribution_stats("q::m", "m", vals)
     assert out is not None
     assert out.sample_count == settings.min_samples

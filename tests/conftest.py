@@ -18,7 +18,7 @@ import pytest
 
 os.environ.setdefault("MUTANT_UNDER_TEST", "")
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+ROOT = str(Path(__file__).resolve().parent.parent)
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
@@ -52,7 +52,7 @@ def _bootstrap_sqlite_database() -> None:
 
 _bootstrap_sqlite_database()
 
-from store.client import _fallback  # noqa: E402
+from store.client import _fallback
 
 
 @pytest.fixture(autouse=True)
