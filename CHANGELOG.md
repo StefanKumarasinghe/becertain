@@ -2,12 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.0.6] - 2026-05-16
+## [Unreleased] - 2026-05-16
 
 ### Changed
 
-- Restored resolver analyzer and response model compatibility while keeping the full resolver test suite at 100% coverage.
-- Updated resolver helper and store surfaces to preserve strict typing and linting without regressions.
+- Restored analyzer helper compatibility by keeping log-query construction available for tests and routing analyzer execution through the request/service path.
+- Converted response list fields to real Pydantic defaults and tightened analyzer, datasource, engine, and store helper surfaces for strict typing.
 
 ## [v0.0.5] - 2026-04-21
 
