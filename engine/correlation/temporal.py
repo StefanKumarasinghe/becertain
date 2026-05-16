@@ -35,17 +35,6 @@ def _overlap(a_start: float, a_end: float, b_start: float, b_end: float) -> bool
     return a_start <= b_end and b_start <= a_end
 
 
-def _tokenize(value: str) -> set[str]:
-    raw = (value or "").strip().lower()
-    if not raw:
-        return set()
-    for ch in "{}[]=,():|\"'":
-        raw = raw.replace(ch, " ")
-    for ch in ".-/":
-        raw = raw.replace(ch, " ")
-    return {part for part in raw.split() if part}
-
-
 _SERVICE_LABEL_RE = re.compile(r"(?:service(?:\.name|_name)?|job)\s*=\s*([^,}]+)")
 
 

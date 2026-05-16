@@ -196,10 +196,6 @@ def enforce_request_tenant(model: ModelT) -> ModelT:
     return model.model_copy(update={"tenant_id": tenant})
 
 
-def authenticate_internal_request(request: Request) -> InternalContext:
-    return authenticate_internal_headers(request.headers)
-
-
 def authenticate_internal_headers(headers: Mapping[str, str]) -> InternalContext:
     expected_service_token = settings.expected_service_token
     if not expected_service_token:
